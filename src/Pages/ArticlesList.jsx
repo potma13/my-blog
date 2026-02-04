@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getArticles } from '../Api/Articles.jsx';
-import Pagination from '../Pages/Pagination.jsx';
-import Loader from '../Pages/Loader.jsx';
+import Pagination from '../Components/Pagination.jsx';
+import Loader from '../Components/Loader.jsx';
 
 const LIMIT = 3;
 

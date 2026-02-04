@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { getArticleBySlug } from '../Api/Articles.jsx';
-import Loader from '../Pages/Loader.jsx';
+import Loader from '../Components/Loader.jsx';
 
 function ArticlePage() {
   const { slug } = useParams();
