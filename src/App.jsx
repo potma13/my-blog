@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import ArticlesList from './Components/ArticlesList.jsx';
-import ArticlePage from './Components/ArticlePage.jsx';
+import ArticlesList from './Pages/ArticlesList.jsx';
+import ArticlePage from './Pages/ArticlePage.jsx';
 
 function App() {
   return (
