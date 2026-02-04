@@ -1,5 +1,9 @@
 function Loader() {
-  return <p>Загрузка...</p>;
+  return (
+    <div className="loader-wrapper">
+      <div className="loader" />
+    </div>
+  );
 }
 
 export default Loader;

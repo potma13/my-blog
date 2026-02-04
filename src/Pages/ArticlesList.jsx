@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getArticles } from '../Api/Articles.jsx';
 import Pagination from '../Components/Pagination.jsx';
 import Loader from '../Components/Loader.jsx';
+import { FaPen, FaCog, FaUser, FaHeart } from 'react-icons/fa';
 
 const LIMIT = 3;
 
@@ -32,9 +33,9 @@ function ArticlesList() {
           <span className="logo">Realworld Blog</span>
           <nav className="nav">
             <span>Home</span>
-            <span>New Post</span>
-            <span>Settings</span>
-            <span>Account</span>
+            <span><FaPen />New Post</span>
+            <span><FaCog />Settings</span>
+            <span><FaUser />Account</span>
           </nav>
         </div>
       </header>
@@ -48,15 +49,18 @@ function ArticlesList() {
         {articles.map((article) => (
           <div key={article.slug} className="article-card">
             <div className="article-meta">
-              <div>
-                <div className="author">{article.author.username}</div>
-                <div className="date">
-                  {new Date(article.createdAt).toDateString()}
+              <div className="author-row">
+                <FaUser className="author-icon" />
+                <div>
+                  <div className="author">{article.author.username}</div>
+                  <div className="date">
+                    {new Date(article.createdAt).toDateString()}
+                  </div>
                 </div>
               </div>
 
               <button className="like-btn" disabled>
-                ♥ {article.favoritesCount}
+                <FaHeart /> {article.favoritesCount}
               </button>
             </div>
 

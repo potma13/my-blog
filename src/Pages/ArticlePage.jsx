@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { getArticleBySlug } from '../Api/Articles.jsx';
 import Loader from '../Components/Loader.jsx';
+import { FaPen, FaCog, FaUser, FaHeart } from 'react-icons/fa';
 
 function ArticlePage() {
   const { slug } = useParams();
@@ -31,9 +32,9 @@ function ArticlePage() {
           <span className="logo">Realworld Blog</span>
           <nav className="nav">
             <span>Home</span>
-            <span>New Post</span>
-            <span>Settings</span>
-            <span>Account</span>
+            <span><FaPen />New Post</span>
+            <span><FaCog />Settings</span>
+            <span><FaUser />Account</span>
           </nav>
         </div>
       </header>
@@ -43,12 +44,15 @@ function ArticlePage() {
           <h1>{article.title}</h1>
 
           <div className="article-meta-row">
-            <div>
-              <div className="article-author">
-                {article.author.username}
-              </div>
-              <div className="article-date">
-                {new Date(article.createdAt).toDateString()}
+            <div className="author-row">
+              <FaUser className="author-icon" />
+              <div>
+                <div className="article-author">
+                  {article.author.username}
+                </div>
+                <div className="article-date">
+                  {new Date(article.createdAt).toDateString()}
+                </div>
               </div>
             </div>
 
