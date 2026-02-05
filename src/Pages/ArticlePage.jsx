@@ -56,9 +56,9 @@ function ArticlePage() {
               </div>
             </div>
 
-            <button className="favorite-btn" disabled>
-              ♥ Favorite article ({article.favoritesCount})
-            </button>
+                <button className="like-btn" disabled>
+                  <FaHeart /> Favorite article
+                </button>
           </div>
         </div>
       </div>

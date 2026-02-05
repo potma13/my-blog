@@ -26,6 +26,8 @@ function ArticlesList() {
 
   if (loading) return <Loader />;
 
+  const popularTags = ['one', 'something', 'chinese', 'english', 'french'];
+
   return (
     <>
       <header className="header">
@@ -45,40 +47,51 @@ function ArticlesList() {
         <p>A place to share your knowledge.</p>
       </div>
 
-      <main className="container main">
-        {articles.map((article) => (
-          <div key={article.slug} className="article-card">
-            <div className="article-meta">
-              <div className="author-row">
-                <FaUser className="author-icon" />
-                <div>
-                  <div className="author">{article.author.username}</div>
-                  <div className="date">
-                    {new Date(article.createdAt).toDateString()}
+      <main className="container">
+
+        <div className="popular-tags">
+          <p className="popular-tags-title">Popular tags</p>
+          <div className="popular-tags-list">
+            {popularTags.map(tag => (
+              <span key={tag} className="popular-tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="articles-list">    
+          {articles.map(article => (
+            <div key={article.slug} className="article-card">
+              <div className="article-meta">
+                <div className="author-row">
+                  <FaUser className="author-icon" />
+                  <div>
+                    <div className="author">{article.author.username}</div>
+                    <div className="date">
+                      {new Date(article.createdAt).toDateString()}
+                    </div>
                   </div>
                 </div>
+
+                <button className="like-btn" disabled>
+                  <FaHeart /> {article.favoritesCount}
+                </button>
               </div>
 
-              <button className="like-btn" disabled>
-                <FaHeart /> {article.favoritesCount}
-              </button>
+              <Link to={`/articles/${article.slug}`}>
+                <h2 className="article-title">{article.title}</h2>
+                <p className="article-desc">{article.description}</p>
+              </Link>
+
+              <div className="tags">
+                {article.tagList.map(tag => (
+                  <span key={tag} className="tag">{tag}</span>
+                ))}
+              </div>
             </div>
-
-            <Link to={`/articles/${article.slug}`}>
-              <h2 className="article-title">{article.title}</h2>
-              <p className="article-desc">{article.description}</p>
-            </Link>
-
-            <div className="tags">
-              {article.tagList.map((tag) => (
-                <span key={tag} className="tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-
+          ))}
+        </div>
         <Pagination
           total={articlesCount}
           limit={LIMIT}
