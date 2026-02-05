@@ -84,14 +84,17 @@ function ArticlesList() {
                 <p className="article-desc">{article.description}</p>
               </Link>
 
-              <div className="tags">
-                {article.tagList.map(tag => (
-                  <span key={tag} className="tag">{tag}</span>
-                ))}
-              </div>
+              {article.tagList
+                .filter(tag => tag)
+                .map(tag => (
+                  <span key={tag} className="tag">
+                    {tag}
+                  </span>
+              ))}
             </div>
           ))}
         </div>
+        
         <Pagination
           total={articlesCount}
           limit={LIMIT}

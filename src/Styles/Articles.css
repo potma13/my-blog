@@ -2,7 +2,7 @@
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   padding: 16px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .popular-tags-title {
@@ -93,4 +93,6 @@
   padding: 2px 10px;
   font-size: 12px;
   color: #999;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
