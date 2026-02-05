@@ -55,10 +55,6 @@ function ArticlePage() {
                 </div>
               </div>
             </div>
-
-                <button className="like-btn" disabled>
-                  <FaHeart /> Favorite article
-                </button>
           </div>
         </div>
       </div>
@@ -72,6 +68,25 @@ function ArticlePage() {
               {tag}
             </span>
           ))}
+        </div>
+
+        <div className="article-footer">
+          <div className="article-footer-meta">
+            <FaUser className="author-icon" />
+
+            <div>
+              <div className="article-author">
+                {article.author.username}
+              </div>
+              <div className="article-date">
+                {new Date(article.createdAt).toDateString()}
+              </div>
+            </div>
+          </div>
+
+          <button className="favorite-btn" disabled>
+            <FaHeart /> Favorite article ({article.favoritesCount})
+          </button>
         </div>
       </div>
     </>
