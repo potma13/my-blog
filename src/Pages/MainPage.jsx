@@ -32,7 +32,7 @@ function ArticlesList() {
     <>
       <header className="header">
         <div className="container header-inner">
-          <span className="logo">Realworld Blog</span>
+          <Link to="/" className="logo">Realworld Blog</Link>
           <nav className="nav">
             <span>Home</span>
             <span><FaPen />New Post</span>

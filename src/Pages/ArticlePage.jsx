@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { getArticleBySlug } from '../Api/Articles.jsx';
 import Loader from '../Components/Loader.jsx';
 import { FaPen, FaCog, FaUser, FaHeart } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 function ArticlePage() {
   const { slug } = useParams();
@@ -29,9 +30,9 @@ function ArticlePage() {
     <>
       <header className="header">
         <div className="container header-inner">
-          <span className="logo">Realworld Blog</span>
+          <Link to="/" className="logo">Realworld Blog</Link>
           <nav className="nav">
-            <span>Home</span>
+            <Link to="/">Home</Link>
             <span><FaPen />New Post</span>
             <span><FaCog />Settings</span>
             <span><FaUser />Account</span>
