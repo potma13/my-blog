@@ -20,13 +20,13 @@
   gap: 20px;
   font-size: 14px;
   color: #999;
-  cursor: pointer;
 }
 
 .nav span {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 }
 
 .nav span svg {

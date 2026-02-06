@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import ArticlesList from './Pages/ArticlesList.jsx';
+import ArticlesList from './Pages/MainPage.jsx';
 import ArticlePage from './Pages/ArticlePage.jsx';
 
 function App() {

@@ -84,7 +84,7 @@ function ArticlePage() {
             </div>
           </div>
 
-          <button className="favorite-btn" disabled>
+          <button className="favorite-btn">
             <FaHeart /> Favorite article ({article.favoritesCount})
           </button>
         </div>

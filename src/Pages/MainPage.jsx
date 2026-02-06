@@ -74,7 +74,7 @@ function ArticlesList() {
                   </div>
                 </div>
 
-                <button className="like-btn" disabled>
+                <button className="like-btn">
                   <FaHeart /> {article.favoritesCount}
                 </button>
               </div>
