@@ -9,6 +9,7 @@ body {
     'Helvetica Neue', sans-serif;
   background: #fff;
   color: #373a3c;
+  overflow-y: scroll;
 }
 
 a {

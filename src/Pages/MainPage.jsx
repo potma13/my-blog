@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { getArticles } from '../Api/Articles.jsx';
 import Pagination from '../Components/Pagination.jsx';
 import Loader from '../Components/Loader.jsx';
-import { FaPen, FaCog, FaUser, FaHeart } from 'react-icons/fa';
+import { FaUser, FaHeart } from 'react-icons/fa';
+import Header from '../Components/Header.jsx';
 
 const LIMIT = 3;
 
@@ -11,36 +12,38 @@ function ArticlesList() {
   const [articles, setArticles] = useState([]);
   const [articlesCount, setArticlesCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    let isMounted = true;
 
     getArticles(LIMIT, (page - 1) * LIMIT)
       .then(({ data }) => {
+        if (!isMounted) return;
+
         setArticles(data.articles);
         setArticlesCount(data.articlesCount);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!isMounted) return;
+        setInitialLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [page]);
 
-  if (loading) return <Loader />;
+  if (initialLoading) {
+    return <Loader />;
+  }
 
   const popularTags = ['one', 'something', 'chinese', 'english', 'french'];
 
   return (
     <>
-      <header className="header">
-        <div className="container header-inner">
-          <Link to="/" className="logo">Realworld Blog</Link>
-          <nav className="nav">
-            <span>Home</span>
-            <span><FaPen />New Post</span>
-            <span><FaCog />Settings</span>
-            <span><FaUser />Account</span>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <div className="banner">
         <h1>Realworld Blog</h1>
@@ -48,7 +51,6 @@ function ArticlesList() {
       </div>
 
       <main className="container">
-
         <div className="popular-tags">
           <p className="popular-tags-title">Popular tags</p>
           <div className="popular-tags-list">
@@ -60,14 +62,16 @@ function ArticlesList() {
           </div>
         </div>
 
-        <div className="articles-list">    
+        <div className="articles-list">
           {articles.map(article => (
             <div key={article.slug} className="article-card">
               <div className="article-meta">
                 <div className="author-row">
                   <FaUser className="author-icon" />
                   <div>
-                    <div className="author">{article.author.username}</div>
+                    <div className="author">
+                      {article.author.username}
+                    </div>
                     <div className="date">
                       {new Date(article.createdAt).toDateString()}
                     </div>
@@ -84,17 +88,22 @@ function ArticlesList() {
                 <p className="article-desc">{article.description}</p>
               </Link>
 
-              {article.tagList
-                .filter(tag => tag)
-                .map(tag => (
-                  <span key={tag} className="tag">
-                    {tag}
-                  </span>
-              ))}
+              <div className="tags">
+                {article.tagList
+                  .filter(Boolean)
+                  .map(tag => (
+                    <span
+                      key={`${article.slug}-${tag}`}
+                      className="tag"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+              </div>
             </div>
           ))}
         </div>
-        
+
         <Pagination
           total={articlesCount}
           limit={LIMIT}
