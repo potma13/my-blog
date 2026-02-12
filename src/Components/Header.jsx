@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import { FaPen, FaCog, FaUser } from 'react-icons/fa';
+import useAuthStore from '../Store/AuthStore';
 
 function Header() {
+  const user = useAuthStore((s) => s.user);
+  const isAuth = useAuthStore((s) => s.isAuth);
+
   return (
     <header className="header">
       <div className="container header-inner">
@@ -9,9 +13,19 @@ function Header() {
 
         <nav className="nav">
           <Link to="/">Home</Link>
-          <span><FaPen />New Post</span>
-          <span><FaCog />Settings</span>
-          <span><FaUser />Account</span>
+
+          <Link to={isAuth ? "/" : "/sign-up"}>
+            <FaPen />New Post
+          </Link>
+
+          <Link to={isAuth ? "/settings" : "/sign-up"}>
+            <FaCog />Settings
+          </Link>
+
+          <Link to={isAuth ? "/" : "/sign-in"}>
+            <FaUser />
+            {isAuth && user ? user.username : 'Account'}
+          </Link>
         </nav>
       </div>
     </header>

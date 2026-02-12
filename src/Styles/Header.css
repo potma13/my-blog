@@ -22,13 +22,13 @@
   color: #999;
 }
 
-.nav span {
+.nav a {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
 
-.nav span svg {
+.nav a svg {
   color: #5cb85c;
 }

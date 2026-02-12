@@ -1,7 +1,9 @@
 @import './Styles/Base.css';
 @import './Styles/Header.css';
 @import './Styles/Banner.css';
+@import './Styles/Auth.css';
 @import './Styles/Articles.css';
 @import './Styles/ArticlePage.css';
 @import './Styles/Pagination.css';
 @import './Styles/Loader.css';
+@import './Styles/SettingsPage.css';

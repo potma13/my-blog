@@ -1,15 +1,84 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import ArticlesList from './Pages/MainPage.jsx';
-import ArticlePage from './Pages/ArticlePage.jsx';
+import { useEffect } from 'react';
+
+import Layout from './Components/Layout';
+import ArticlesList from './Pages/MainPage';
+import ArticlePage from './Pages/ArticlePage';
+import SignUp from './Pages/SignUp';
+import SignIn from './Pages/SignIn';
+import Settings from './Pages/SettingsPage';
+
+import useAuthStore from './Store/AuthStore';
+import { getCurrentUser } from './Api/Auth';
+import { ProtectedRoute, ProtectedAuthRoute } from './Components/ProtectedRoutes';
 
 function App() {
+  const token = useAuthStore((s) => s.token);
+  const hydrate = useAuthStore((s) => s.hydrate);
+  const logout = useAuthStore((s) => s.logout);
+
+  useEffect(() => {
+    if (!token) return;
+
+    getCurrentUser(token)
+      .then(({ data }) => {
+        hydrate(data.user);
+      })
+      .catch(() => {
+        logout();
+      });
+  }, [token]);
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ArticlesList />} />
-        <Route path="/articles" element={<ArticlesList />} />
-        <Route path="/articles/:slug" element={<ArticlePage />} />
-        <Route path="*" element={<Navigate to="/" />} />
+
+        {/* layout */}
+        <Route element={<Layout />}>
+
+          {/* главная */}
+          <Route index element={<ArticlesList />} />
+
+          {/* вложенные articles */}
+          <Route path="articles">
+            <Route index element={<ArticlesList />} />
+            <Route path=":slug" element={<ArticlePage />} />
+          </Route>
+
+          {/* защищённая страница */}
+          <Route
+            path="settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* только для не авторизованных */}
+          <Route
+            path="sign-in"
+            element={
+              <ProtectedAuthRoute>
+                <SignIn />
+              </ProtectedAuthRoute>
+            }
+          />
+
+          <Route
+            path="sign-up"
+            element={
+              <ProtectedAuthRoute>
+                <SignUp />
+              </ProtectedAuthRoute>
+            }
+          />
+
+        </Route>
+
+        {/* 404 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </BrowserRouter>
   );

@@ -4,7 +4,6 @@ import { getArticles } from '../Api/Articles.jsx';
 import Pagination from '../Components/Pagination.jsx';
 import Loader from '../Components/Loader.jsx';
 import { FaUser, FaHeart } from 'react-icons/fa';
-import Header from '../Components/Header.jsx';
 
 const LIMIT = 3;
 
@@ -43,8 +42,6 @@ function ArticlesList() {
 
   return (
     <>
-      <Header />
-
       <div className="banner">
         <h1>Realworld Blog</h1>
         <p>A place to share your knowledge.</p>

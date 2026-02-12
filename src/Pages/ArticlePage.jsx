@@ -28,8 +28,6 @@ function ArticlePage() {
 
   return (
     <>
-      <Header />
-
       <div className="article-banner">
         <div className="article-banner-inner">
           <h1>{article.title}</h1>
