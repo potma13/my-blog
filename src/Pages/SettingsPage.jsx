@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import useAuthStore from '../Store/AuthStore';
 import { getCurrentUser, updateUser } from '../Api/Auth';

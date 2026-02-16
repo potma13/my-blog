@@ -4,7 +4,6 @@ import ReactMarkdown from 'react-markdown';
 import { getArticleBySlug } from '../Api/Articles.jsx';
 import Loader from '../Components/Loader.jsx';
 import { FaUser, FaHeart } from 'react-icons/fa';
-import Header from '../Components/Header.jsx';
 
 function ArticlePage() {
   const { slug } = useParams();
