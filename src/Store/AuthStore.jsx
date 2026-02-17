@@ -1,40 +1,38 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-const TOKEN_KEY = 'auth_token';
-
-const tokenFromStorage = localStorage.getItem(TOKEN_KEY);
-
-const useAuthStore = create((set) => ({
-  user: null,
-  token: tokenFromStorage,
-  isAuth: !!tokenFromStorage,
-
-  login: (user) => {
-    localStorage.setItem(TOKEN_KEY, user.token);
-
-    set({
-      user,
-      token: user.token,
-      isAuth: true,
-    });
-  },
-
-  logout: () => {
-    localStorage.removeItem(TOKEN_KEY);
-
-    set({
+const useAuthStore = create(
+  persist(
+    (set) => ({
       user: null,
       token: null,
       isAuth: false,
-    });
-  },
 
-  hydrate: (user) =>
-    set({
-      user,
-      token: user.token,
-      isAuth: true,
+      login: (user) =>
+        set({
+          user,
+          token: user.token,
+          isAuth: true,
+        }),
+
+      logout: () =>
+        set({
+          user: null,
+          token: null,
+          isAuth: false,
+        }),
+
+      hydrate: (user) =>
+        set({
+          user,
+          token: user.token,
+          isAuth: true,
+        }),
     }),
-}));
+    {
+      name: 'auth-storage', 
+    }
+  )
+);
 
 export default useAuthStore;
