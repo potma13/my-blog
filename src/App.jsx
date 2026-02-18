@@ -28,7 +28,7 @@ function App() {
   }, [token, hydrate, logout]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/my-blog">
       <Routes>
 
         {/* layout */}
@@ -52,7 +52,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
           <Route
             path="articles/:slug/edit"
             element={
