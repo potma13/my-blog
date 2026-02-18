@@ -10,18 +10,39 @@ import useAuthStore from '../Store/AuthStore';
 function ArticlePage() {
   const { slug } = useParams();
   const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchArticle = async () => {
+      try {
+        const { data } = await getArticleBySlug(slug);
+        if (isMounted) {
+          setArticle(data.article);
+        }
+      } catch (err) {
+        console.error('Error loading article:', err);
+        if (isMounted) {
+          setError('Ошибка загрузки');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     setLoading(true);
     setError(null);
+    
+    fetchArticle();
 
-    getArticleBySlug(slug)
-      .then(({ data }) => setArticle(data.article))
-      .catch(() => setError('Ошибка загрузки'))
-      .finally(() => setLoading(false));
+    return () => {
+      isMounted = false;
+    };
   }, [slug]);
 
   if (loading) return <Loader />;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader';
@@ -24,47 +24,7 @@ function Settings() {
     formState: { errors },
   } = useForm();
 
-  useEffect(() => {
-    let isMounted = true;
-    
-    const timer = setTimeout(() => {
-      if (!isMounted) return;
-      
-      if (!token) {
-        navigate('/sign-in');
-        return;
-      }
-
-      if (user) {
-        resetForm(user);
-        setInitialLoading(false);
-        return;
-      }
-
-      getCurrentUser(token)
-        .then(({ data }) => {
-          if (!isMounted) return;
-          hydrate(data.user);
-          resetForm(data.user);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          logout();
-          navigate('/sign-in');
-        })
-        .finally(() => {
-          if (!isMounted) return;
-          setInitialLoading(false);
-        });
-    }, 300);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
-  }, [token]);
-
-  const resetForm = (currentUser) => {
+  const resetForm = useCallback((currentUser) => {
     reset({
       username: currentUser.username,
       email: currentUser.email,
@@ -72,7 +32,48 @@ function Settings() {
       image: currentUser.image || '',
       password: '',
     });
-  };
+  }, [reset]);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const timer = setTimeout(() => {
+      const loadUser = async () => {
+        if (!token) {
+          navigate('/sign-in');
+          return;
+        }
+
+        if (user) {
+          resetForm(user);
+          if (isMounted) setInitialLoading(false);
+          return;
+        }
+
+        try {
+          const { data } = await getCurrentUser(token);
+          if (isMounted) {
+            hydrate(data.user);
+            resetForm(data.user);
+          }
+        } catch {
+          if (isMounted) {
+            logout();
+            navigate('/sign-in');
+          }
+        } finally {
+          if (isMounted) setInitialLoading(false);
+        }
+      };
+
+      loadUser();
+    }, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [token, user, hydrate, logout, navigate, resetForm]);
 
   const onSubmit = async (formData) => {
     try {
@@ -93,7 +94,7 @@ function Settings() {
 
       hydrate(data.user);
 
-      resetForm(data.user)
+      resetForm(data.user);
     } catch (err) {
       if (err.response?.status === 422) {
         const message = err.response.data.errors?.body?.[0];

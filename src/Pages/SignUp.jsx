@@ -29,6 +29,7 @@ function SignUp() {
 
   const onSubmit = async (formData) => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const { repeatPassword, agree, ...userData } = formData;
 
       const { data } = await registerUser(userData);
