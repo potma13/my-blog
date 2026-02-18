@@ -32,7 +32,7 @@ export const updateUser = (token, data) =>
     data,
     {
       headers: {
-        Authorization: token,
+        Authorization: `Token ${token}`,
       },
     }
   );

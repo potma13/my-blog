@@ -25,29 +25,43 @@ function Settings() {
   } = useForm();
 
   useEffect(() => {
-    if (!token) {
-      navigate('/sign-in');
-      return;
-    }
-
-    if (user) {
-      resetForm(user);
-      setInitialLoading(false);
-      return;
-    }
-
-    getCurrentUser(token)
-      .then(({ data }) => {
-        hydrate(data.user);
-        resetForm(data.user);
-      })
-      .catch(() => {
-        logout();
+    let isMounted = true;
+    
+    const timer = setTimeout(() => {
+      if (!isMounted) return;
+      
+      if (!token) {
         navigate('/sign-in');
-      })
-      .finally(() => {
+        return;
+      }
+
+      if (user) {
+        resetForm(user);
         setInitialLoading(false);
-      });
+        return;
+      }
+
+      getCurrentUser(token)
+        .then(({ data }) => {
+          if (!isMounted) return;
+          hydrate(data.user);
+          resetForm(data.user);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          logout();
+          navigate('/sign-in');
+        })
+        .finally(() => {
+          if (!isMounted) return;
+          setInitialLoading(false);
+        });
+    }, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [token]);
 
   const resetForm = (currentUser) => {

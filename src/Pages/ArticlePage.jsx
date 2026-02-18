@@ -4,12 +4,15 @@ import ReactMarkdown from 'react-markdown';
 import { getArticleBySlug } from '../Api/Articles.jsx';
 import Loader from '../Components/Loader.jsx';
 import { FaUser, FaHeart } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import useAuthStore from '../Store/AuthStore';
 
 function ArticlePage() {
   const { slug } = useParams();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     setLoading(true);
@@ -43,6 +46,14 @@ function ArticlePage() {
                 </div>
               </div>
             </div>
+            {user?.username === article.author.username && (
+              <Link
+                to={`/articles/${article.slug}/edit`}
+                className="favorite-btn"
+              >
+                Edit Article
+              </Link>
+            )}
           </div>
         </div>
       </div>

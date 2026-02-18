@@ -14,7 +14,7 @@ function Header() {
         <nav className="nav">
           <Link to="/">Home</Link>
 
-          <Link to={isAuth ? "/" : "/sign-up"}>
+          <Link to={isAuth ? "/new-article" : "/sign-up"}>
             <FaPen />New Post
           </Link>
 
