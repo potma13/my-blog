@@ -9,3 +9,10 @@ export const getArticles = (limit = 10, offset = 0) =>
 
 export const getArticleBySlug = (slug) =>
   axios.get(`${API_URL}/articles/${slug}`);
+
+export const deleteArticle = (slug, token) =>
+  axios.delete(`${API_URL}/articles/${slug}`, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import Loader from '../Components/Loader.jsx';
-import { registerUser } from '../Api/Auth.jsx';
-import useAuthStore from '../Store/AuthStore.jsx';
+import Loader from '../Components/Loader';
+import { registerUser } from '../Api/Auth';
+import useAuthStore from '../Store/AuthStore';
 
 function SignUp() {
   const [initialLoading, setInitialLoading] = useState(true);

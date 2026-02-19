@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getArticles } from '../Api/Articles.jsx';
-import Pagination from '../Components/Pagination.jsx';
-import Loader from '../Components/Loader.jsx';
+import { getArticles } from '../Api/Articles';
+import Pagination from '../Components/Pagination';
+import Loader from '../Components/Loader';
 import { FaUser, FaHeart } from 'react-icons/fa';
 
 const LIMIT = 3;

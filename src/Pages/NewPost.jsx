@@ -23,22 +23,26 @@ function NewPost() {
   }
 
   const handleCreate = async (data) => {
-    const response = await axios.post(
-      `${API_URL}/articles`,
-      {
-        article: {
-          ...data,
-          tagList: [],
+    try {
+      const response = await axios.post(
+        `${API_URL}/articles`,
+        {
+          article: {
+            ...data,
+            tagList: [],
+          },
         },
-      },
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
 
     navigate(`/articles/${response.data.article.slug}`);
+    } catch (err) {
+    console.error(err);
+    }
   };
 
   return (

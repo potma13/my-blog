@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { getArticleBySlug } from '../Api/Articles.jsx';
-import Loader from '../Components/Loader.jsx';
+import { getArticleBySlug } from '../Api/Articles';
+import Loader from '../Components/Loader';
 import { FaUser, FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import useAuthStore from '../Store/AuthStore';
+import ConfirmModal from '../Components/ConfirmModal';
+import { deleteArticle } from '../Api/Articles';
+import { useNavigate } from 'react-router-dom';
 
 function ArticlePage() {
   const { slug } = useParams();
@@ -13,6 +16,11 @@ function ArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const navigate = useNavigate();
+
+  const [showModal, setShowModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -24,9 +32,9 @@ function ArticlePage() {
           setArticle(data.article);
         }
       } catch (err) {
-        console.error('Error loading article:', err);
+        console.error('Error404 loading article:', err);
         if (isMounted) {
-          setError('Ошибка загрузки');
+          setError('Такой статьи не существует');
         }
       } finally {
         if (isMounted) {
@@ -44,6 +52,19 @@ function ArticlePage() {
       isMounted = false;
     };
   }, [slug]);
+
+  const handleDelete = async () => {
+    try {
+      setDeleteLoading(true);
+      await deleteArticle(slug, token);
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleteLoading(false);
+      setShowModal(false);
+    }
+  };
 
   if (loading) return <Loader />;
   if (error) return <p>{error}</p>;
@@ -68,12 +89,21 @@ function ArticlePage() {
               </div>
             </div>
             {user?.username === article.author.username && (
-              <Link
-                to={`/articles/${article.slug}/edit`}
-                className="favorite-btn"
-              >
-                Edit Article
-              </Link>
+              <div className="article-actions">
+                <Link
+                  to={`/articles/${article.slug}/edit`}
+                  className="edit-btn"
+                >
+                  Edit
+                </Link>
+
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="delete-btn"
+                >
+                  Delete
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -109,6 +139,14 @@ function ArticlePage() {
           </button>
         </div>
       </div>
+      
+      {showModal && (
+        <ConfirmModal
+          onConfirm={handleDelete}
+          onCancel={() => setShowModal(false)}
+          loading={deleteLoading}
+        />
+      )}
     </>
   );
 }

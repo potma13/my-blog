@@ -11,7 +11,8 @@ function EditArticle() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const token = useAuthStore((s) => s.token);
-
+  const user = useAuthStore((s) => s.user);
+  
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,6 +20,10 @@ function EditArticle() {
     axios
       .get(`${API_URL}/articles/${slug}`)
       .then(({ data }) => {
+        if (data.article.author.username !== user?.username) {
+          navigate('/');
+          return;
+      }
         setArticle(data.article);
       })
       .finally(() => setLoading(false));
