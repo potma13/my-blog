@@ -1,18 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../Store/AuthStore';
-import axios from 'axios';
 import ArticleForm from '../Components/ArticleForm';
 import '../Styles/NewPost.css';
 import { useEffect, useState } from 'react';
 import Loader from '../Components/Loader';
-
-const API_URL = 'https://realworld.habsida.net/api';
+import { createArticle } from '../Api/Articles';
 
 function NewPost() {
   const navigate = useNavigate();
   const token = useAuthStore((s) => s.token);
   const [initialLoading, setInitialLoading] = useState(true);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setInitialLoading(false), 300);
     return () => clearTimeout(timer);
@@ -24,24 +22,10 @@ function NewPost() {
 
   const handleCreate = async (data) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/articles`,
-        {
-          article: {
-            ...data,
-            tagList: [],
-          },
-        },
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
-
-    navigate(`/articles/${response.data.article.slug}`);
+      const response = await createArticle(data, token);
+      navigate(`/articles/${response.data.article.slug}`);
     } catch (err) {
-    console.error(err);
+      console.error(err);
     }
   };
 

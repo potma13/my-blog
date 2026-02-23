@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { getArticleBySlug } from '../Api/Articles';
+import { FaUser, FaHeart, FaRegHeart } from 'react-icons/fa';
 import Loader from '../Components/Loader';
-import { FaUser, FaHeart } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import useAuthStore from '../Store/AuthStore';
 import ConfirmModal from '../Components/ConfirmModal';
-import { deleteArticle } from '../Api/Articles';
-import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../Store/AuthStore';
+import { getArticleBySlug, favoriteArticle, unfavoriteArticle, deleteArticle } from '../Api/Articles';
 
 function ArticlePage() {
   const { slug } = useParams();
@@ -18,21 +15,43 @@ function ArticlePage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const navigate = useNavigate();
-
+  
   const [showModal, setShowModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [liking, setLiking] = useState(false);
+
+  const handleLike = async () => {
+    if (!user || !article) return;
+    
+    setLiking(true);
+    try {
+      let response;
+      if (article.favorited) {
+        response = await unfavoriteArticle(article.slug, token);
+      } else {
+        response = await favoriteArticle(article.slug, token);
+      }
+      
+      setArticle(response.data.article);
+    } catch (err) {
+      console.error('Error liking article:', err);
+    } finally {
+      setLiking(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchArticle = async () => {
       try {
-        const { data } = await getArticleBySlug(slug);
+        const { data } = await getArticleBySlug(slug, token);
         if (isMounted) {
           setArticle(data.article);
+          console.log('Loaded article with favorited:', data.article.favorited);
         }
       } catch (err) {
-        console.error('Error404 loading article:', err);
+        console.error('Error loading article:', err);
         if (isMounted) {
           setError('Такой статьи не существует');
         }
@@ -51,7 +70,7 @@ function ArticlePage() {
     return () => {
       isMounted = false;
     };
-  }, [slug]);
+  }, [slug, token]);
 
   const handleDelete = async () => {
     try {
@@ -90,17 +109,10 @@ function ArticlePage() {
             </div>
             {user?.username === article.author.username && (
               <div className="article-actions">
-                <Link
-                  to={`/articles/${article.slug}/edit`}
-                  className="edit-btn"
-                >
+                <Link to={`/articles/${article.slug}/edit`} className="edit-btn">
                   Edit
                 </Link>
-
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="delete-btn"
-                >
+                <button onClick={() => setShowModal(true)} className="delete-btn">
                   Delete
                 </button>
               </div>
@@ -114,28 +126,28 @@ function ArticlePage() {
 
         <div className="article-tags">
           {article.tagList.map((tag) => (
-            <span key={tag} className="tag">
-              {tag}
-            </span>
+            <span key={tag} className="tag">{tag}</span>
           ))}
         </div>
 
         <div className="article-footer">
           <div className="article-footer-meta">
             <FaUser className="author-icon" />
-
             <div>
-              <div className="article-author">
-                {article.author.username}
-              </div>
+              <div className="article-author">{article.author.username}</div>
               <div className="article-date">
                 {new Date(article.createdAt).toDateString()}
               </div>
             </div>
           </div>
 
-          <button className="favorite-btn">
-            <FaHeart /> Favorite article ({article.favoritesCount})
+          <button
+            className={`favorite-btn ${article.favorited ? 'liked' : ''}`}
+            onClick={handleLike}
+            disabled={!user || liking}
+          >
+            {article.favorited ? <FaHeart /> : <FaRegHeart />}
+            {article.favorited ? 'Unfavorite' : 'Favorite'} article ({article.favoritesCount})
           </button>
         </div>
       </div>

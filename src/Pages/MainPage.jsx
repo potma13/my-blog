@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getArticles } from '../Api/Articles';
+import { getArticles, favoriteArticle, unfavoriteArticle } from '../Api/Articles';
 import Pagination from '../Components/Pagination';
 import Loader from '../Components/Loader';
-import { FaUser, FaHeart } from 'react-icons/fa';
+import { FaUser, FaHeart, FaRegHeart } from 'react-icons/fa';
+import useAuthStore from '../Store/AuthStore';
 
 const LIMIT = 3;
 
@@ -11,16 +12,45 @@ function ArticlesList() {
   const [articles, setArticles] = useState([]);
   const [articlesCount, setArticlesCount] = useState(0);
   const [page, setPage] = useState(1);
+  const token = useAuthStore((s) => s.token);
+  const isAuth = useAuthStore((s) => s.isAuth);
 
   const [initialLoading, setInitialLoading] = useState(true);
+  const [likingSlug, setLikingSlug] = useState(null);
+
+  const handleLike = async (article, e) => {
+    e.preventDefault();
+    if (!isAuth) return;
+
+    setLikingSlug(article.slug);
+    try {
+      let response;
+      if (article.favorited) {
+        response = await unfavoriteArticle(article.slug, token);
+      } else {
+        response = await favoriteArticle(article.slug, token);
+      }
+      
+      const updatedArticle = response.data.article;
+      
+      setArticles(prevArticles =>
+        prevArticles.map(a =>
+          a.slug === article.slug ? updatedArticle : a
+        )
+      );
+    } catch (err) {
+      console.error('Error liking article:', err);
+    } finally {
+      setLikingSlug(null);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
 
-    getArticles(LIMIT, (page - 1) * LIMIT)
+    getArticles(LIMIT, (page - 1) * LIMIT, token)
       .then(({ data }) => {
         if (!isMounted) return;
-
         setArticles(data.articles);
         setArticlesCount(data.articlesCount);
       })
@@ -32,7 +62,7 @@ function ArticlesList() {
     return () => {
       isMounted = false;
     };
-  }, [page]);
+  }, [page, token]);
 
   if (initialLoading) {
     return <Loader />;
@@ -75,8 +105,13 @@ function ArticlesList() {
                   </div>
                 </div>
 
-                <button className="like-btn">
-                  <FaHeart /> {article.favoritesCount}
+                <button
+                  className={`like-btn ${article.favorited ? 'liked' : ''}`}
+                  onClick={(e) => handleLike(article, e)}
+                  disabled={!isAuth || likingSlug === article.slug}
+                >
+                  {article.favorited ? <FaHeart /> : <FaRegHeart />}
+                  {article.favoritesCount}
                 </button>
               </div>
 
